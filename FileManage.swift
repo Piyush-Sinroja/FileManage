@@ -2,13 +2,14 @@
 //  FileManage.swift
 //  FileManage
 //
-//  Created by piyush sinroja on 19/04/18.
+//  Created by piyush sinroja on 14/05/20.
 //  Copyright © 2018 piyush. All rights reserved.
 //
 
 import Foundation
 import UIKit
 
+/// filemange class is used to manage file opearation related stuff
 class FileManage: NSObject {
     
     // MARK: - Documents Directory
@@ -52,11 +53,17 @@ class FileManage: NSObject {
         }
     }
     
+    /// remove single file from document dir
+    /// - Parameter fileName: filename which you want to remove
     class func removeSingleFileFromDocumentDir(fileName: String) {
         let documentDirectory = FileManage.documentsDirectory()
         removeFileFromDocumentDirectory(documentDirectory: documentDirectory, path: fileName)
     }
     
+    /// remove file from document dir
+    /// - Parameters:
+    ///   - documentDirectory: document dir path
+    ///   - path: path in string
     fileprivate class func removeFileFromDocumentDirectory(documentDirectory: URL, path: String) {
         let fileManager = FileManager.default
         let deletePath = documentDirectory.appendingPathComponent(path)
@@ -67,6 +74,8 @@ class FileManage: NSObject {
         }
     }
     
+    /// remove all file from document dir
+    /// - Parameter documentDirectory: document dir url
     fileprivate class func removeFromDocumentDirectory(documentDirectory: URL)  {
         let fileManager = FileManager.default
         do {
@@ -84,7 +93,7 @@ class FileManage: NSObject {
         let documentsPath = FileManage.documentsDirectory()
         var filepath: String? = nil
         let fileURL = documentsPath.appendingPathComponent(imgName)
-        if let data = UIImageJPEGRepresentation(img, compressionQuality) {
+        if let data = img.jpegData(compressionQuality: compressionQuality) {
             if !FileManager.default.fileExists(atPath: fileURL.path) {
                 do {
                     try data.write(to: fileURL)
@@ -135,7 +144,7 @@ class FileManage: NSObject {
     }
     
     // MARK: - Create File To Document Directory
-    func createFileToDocumentDirectory(text: String, fileNameWithExtension: String) -> Bool {
+   class func createTextFileToDocumentDirectory(text: String, fileNameWithExtension: String) -> Bool {
         let documentsDirectory = FileManage.documentsDirectory()
         let fileURL = documentsDirectory.appendingPathComponent(fileNameWithExtension)
         do {
@@ -145,7 +154,7 @@ class FileManage: NSObject {
     }
     
     // MARK: - Read File From Document Directory
-    func readFileFromDocumentDirectory(fileNameWithExtension: String) -> String? {
+    class func readTextFileFromDocumentDirectory(fileNameWithExtension: String) -> String? {
         var urlPath: URL?
         var isExist: Bool = false
         var strText: String?
@@ -160,11 +169,11 @@ class FileManage: NSObject {
     }
     
     // MARK: - Copy File From Bundle To Document Directory
-    class func copyFileFromBundleToDocumentDir(sourceName: String, sourceExtension: String, destName: String) -> Bool {
+    class func copyFileFromBundleToDocumentDir(sourceName: String, sourceExtension: String) -> Bool {
         let fileManager = FileManager.default
         guard let bundleFileUrl = Bundle.main.url(forResource: sourceName, withExtension: sourceExtension) else { return false}
         let documentsDirectory = FileManage.documentsDirectory()
-        let documentDirectoryFileUrl = documentsDirectory.appendingPathComponent(destName)
+        let documentDirectoryFileUrl = documentsDirectory.appendingPathComponent(sourceName+"."+sourceExtension)
         if !fileManager.fileExists(atPath: documentDirectoryFileUrl.path) {
             do {
                 try fileManager.copyItem(at: bundleFileUrl, to: documentDirectoryFileUrl)
